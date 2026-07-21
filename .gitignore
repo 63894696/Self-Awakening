@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Configuration files with API keys
+config/model_pool.json
+config/resource_profiles.json
+*.key
+*.pem
+
+# Logs
+*.log
+logs/
+
+# Usage data
+model_usage_log.json
+model_pool.backup.json
+
+# Test data
+test_data/
+.pytest_cache/
