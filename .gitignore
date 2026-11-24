@@ -11,7 +11,12 @@ build/
 *.egg-info/
 runs/*.json
 runs/*.md
+runs/_*.jsonl
 !runs/demo.json
 !runs/.gitkeep
 .env
+
+# Cached model answers are user data, never committed.
+*answercache*.jsonl
+.cache/
 
