@@ -17,6 +17,7 @@ dependencies = []
 
 [project.optional-dependencies]
 web = ["flask>=3.0"]
+dev = ["pytest>=8.0"]
 
 [project.scripts]
 self-awaken = "self_awaken.cli:main"
