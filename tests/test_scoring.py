@@ -40,6 +40,24 @@ class ScoringTests(unittest.TestCase):
         score, _ = score_answer("[0, 1, 2]", "[0, 1, 3]")
         self.assertEqual(score, 0.0)
 
+    def test_choice_conclusion_beats_first_mention(self):
+        answer = (
+            "**逐项分析：**\n\n- **A. 它会漂浮** — 不能必然成立\n"
+            "- **B. 它很轻** — 必然成立\n\n## 答案\n\n**B**"
+        )
+        self.assertEqual(extract_choice(answer), "B")
+
+    def test_trailing_bold_letter_is_used(self):
+        self.assertEqual(extract_choice("百位 = 5\n\n**C**"), "C")
+
+    def test_numeric_uses_last_number_not_first(self):
+        score, _ = score_answer("126", "100 减去 37 再乘以 2：(100 - 37) × 2 = 63 × 2 = **126**")
+        self.assertEqual(score, 1.0)
+
+    def test_numeric_wrong_conclusion_is_a_failure(self):
+        score, _ = score_answer("126", "126 * 2 = 252")
+        self.assertEqual(score, 0.0)
+
 
 if __name__ == "__main__":
     unittest.main()

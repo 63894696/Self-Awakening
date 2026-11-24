@@ -102,6 +102,13 @@ def build_parser() -> argparse.ArgumentParser:
     check_parser.add_argument("--estimate-only", action="store_true", help="Print the cost estimate and exit.")
     check_parser.add_argument("--json", action="store_true", help="Print the full report as JSON.")
     check_parser.add_argument("--out", help="Also write the JSON report to this path.")
+    check_parser.add_argument(
+        "--cache",
+        default=None,
+        help="Answer cache path (default: platform cache dir). Repeats cost zero tokens.",
+    )
+    check_parser.add_argument("--no-cache", action="store_true", help="Ignore and do not write the answer cache.")
+    check_parser.add_argument("--clear-cache", action="store_true", help="Delete the cache file before running.")
     check_parser.set_defaults(func=cmd_check)
 
     lint_parser = subparsers.add_parser("lint-probes", help="Check a probe bank for bad expected values.")
@@ -183,6 +190,17 @@ def cmd_check(args: argparse.Namespace) -> int:
     if not args.api_key:
         raise SystemExit("missing API key: pass --api-key or set SELF_AWAKEN_API_KEY")
 
+    from .answer_cache import AnswerCache, default_cache_path
+
+    cache_path = args.cache or default_cache_path()
+    if args.clear_cache:
+        try:
+            Path(cache_path).unlink()
+            print(f"cleared cache: {cache_path}", file=sys.stderr)
+        except FileNotFoundError:
+            pass
+    cache = AnswerCache(cache_path, enabled=not args.no_cache)
+
     def _progress(count: int, verdict) -> None:
         if sys.stderr.isatty():
             print(
@@ -208,6 +226,7 @@ def cmd_check(args: argparse.Namespace) -> int:
         token_budget=args.token_budget,
         max_probes=args.max_probes,
         min_probes=args.min_probes,
+        cache=cache,
         on_progress=_progress,
     )
     if sys.stderr.isatty():

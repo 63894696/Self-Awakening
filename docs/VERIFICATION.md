@@ -19,7 +19,7 @@ pip install -e ".[web]"
 pytest tests/ -q
 ```
 
-结果：**73 passed**（含 retry、client、factory、web 路由、探针加载、能力判定、题库 lint 等）。
+结果：**91 passed**（含 retry、client、factory、web 路由、探针加载、能力判定、题库 lint 等）。
 
 ## 端到端审计结果
 
@@ -69,20 +69,37 @@ python -m self_awaken.cli compare `
 
 ## 能力达标判定验证（2026-11-25）
 
-`code` 档位，`--pack standard`，`--max-tokens 200`，真实接口：
+`--pack smoke`，`--max-tokens 200-256`，真实接口：
 
-| 接口 | 判定 | 通过率 | 运行题数 | token |
-|------|------|-------:|---------:|------:|
-| `deepseek-chat` | SUFFICIENT | 1.00 | 11 | 830 |
-| `glm-5.3` | SUFFICIENT | 1.00 | 11 | 3 016 |
-| `claude-sonnet-4-6`（中转） | SUFFICIENT | 1.00 | 11 | 1 390 |
-| `glm-4-flash`（弱模型对照） | INSUFFICIENT | 0.65 | 23 | 2 196 |
+| 档位 | 接口 | 判定 | 通过率 | 运行题数 | token |
+| --- | --- | --- | ---: | ---: | ---: |
+| `code` | `deepseek-chat` | SUFFICIENT | 1.00 | 11 | 830 |
+| `code` | `glm-5.3` | SUFFICIENT | 1.00 | 11 | 3 016 |
+| `code` | `claude-sonnet-4-6`（中转） | SUFFICIENT | 1.00 | 11 | 1 390 |
+| `code` | `glm-4-flash`（弱模型对照） | INSUFFICIENT | 0.65 | 23 | 2 196 |
+| `reasoning` | `deepseek-chat` | SUFFICIENT | 1.00 | 10 | 534 |
+| `reasoning` | `glm-5.3` | SUFFICIENT | 1.00 | 10 | 5 616 |
+| `reasoning` | `claude-sonnet-4-6` | SUFFICIENT | 1.00 | 10 | 2 845 |
+| `instruction` | `deepseek-chat` | SUFFICIENT | 1.00 | 11 | 280 |
+| `instruction` | `glm-5.3` | SUFFICIENT | 1.00 | 11 | 2 264 |
+| `instruction` | `claude-sonnet-4-6` | UNDETERMINED | 0.92 | 12 | 528 |
 
 要点：
 
-- 强模型在第 11 题即早停，未跑满题包；弱模型被正确判为不达标，说明规则不是"一律通过"。
-- GLM 因 200 token 截断触发重试，token 偏高；截断答案被记为 `truncated_output` 而非错答。
-- 复跑命令：`self-awaken check --endpoint ... --model ... --profile code --pack standard`。
+- 强模型在第 10-11 题即早停，未跑满题包；弱模型被正确判为不达标。
+- Sonnet 在 `instruction` 档漏了 `instruction-003`（真实答错，非评分问题），12 题 1 错不足以判定达标。
+- GLM 在 reasoning 档 token 偏高，因为对简单题也写长篇分析并触发截断重试。
+
+### 答案缓存效果
+
+| 场景 | token | 缓存命中 |
+| --- | ---: | ---: |
+| `code` 首次（deepseek-chat） | 415 | 0 |
+| `code` 复跑同一接口 | **0** | 11 |
+| 修正答案键后复跑 `reasoning`（sonnet） | **0** | 10 |
+| 复跑 `instruction`（deepseek-chat） | 40 | 10 |
+
+复跑命令（命中缓存即零成本）：`self-awaken check --endpoint ... --model ... --profile code`。
 
 ## 题库校验
 
@@ -105,3 +122,4 @@ self-awaken lint-probes --probes data/probes --strict
 ## 样例数据
 
 脱敏后的运行结构示例见 [samples/verify-core-run.sample.json](samples/verify-core-run.sample.json)，可用于 Web 看板演示（复制到 `runs/demo.json`）。
+

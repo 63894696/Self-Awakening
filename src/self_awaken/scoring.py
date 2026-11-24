@@ -10,6 +10,12 @@ _EXPLICIT_CHOICE_RE = re.compile(
     r"(?:答案|选项|选择|我选|我选择)\s*(?:是|为|:|：)?\s*([A-Ea-e])"
 )
 _ONLY_CHOICE_RE = re.compile(r"^\s*([A-Ea-e])\s*(?:[.。)、)]\s*)?$")
+# A line that is nothing but a bold/plain single letter: "**B**", "B", "B.".
+_TRAILING_CHOICE_RE = re.compile(r"\*\*\s*([A-Ea-e])\s*\*\*|([A-E])\b\s*[.。]?\s*$")
+# Conclusion markers that introduce the final answer.
+_CONCLUSION_RE = re.compile(
+    r"(?:因此|所以|综上|结论|最终答案|正确答案|answer|Answer|ANSWER)\s*(?:是|为|:|：)?\s*\**\s*([A-Ea-e])\b"
+)
 
 
 def normalize_text(value: str) -> str:
@@ -46,13 +52,35 @@ def answer_digest(answer: str) -> str:
 
 
 def extract_choice(answer: str) -> str | None:
+    """Find the option a model chose.
+
+    Order matters. A reasoning model often restates every option ("A. it floats —
+    wrong, B. it is light — wrong, ...") and only states the real answer at the
+    end. Matching the first letter it mentions therefore scores a correct answer
+    as wrong, so we look at the conclusion first and fall back to the earliest
+    mention only when no conclusion exists.
+    """
     normalized = unicodedata.normalize("NFKC", answer)
+
     match = _ONLY_CHOICE_RE.search(normalized)
     if match:
         return match.group(1).upper()
+
+    match = _CONCLUSION_RE.search(normalized)
+    if match:
+        return match.group(1).upper()
+
+    # Last non-empty line is frequently the answer: "**B**" or "B".
+    lines = [line for line in normalized.splitlines() if line.strip()]
+    for line in reversed(lines[-3:]):
+        match = _TRAILING_CHOICE_RE.search(line.strip())
+        if match:
+            return (match.group(1) or match.group(2)).upper()
+
     match = _EXPLICIT_CHOICE_RE.search(normalized)
     if match:
         return match.group(1).upper()
+
     match = _UPPER_CHOICE_RE.search(normalized)
     if match:
         return match.group(1).upper()
@@ -73,9 +101,13 @@ def score_answer(expected: str | None, answer: str) -> tuple[float | None, str |
     if answer_norm == expected_norm:
         return 1.0, choice
 
-    # Numeric answers often appear with short explanations. Accept the first exact number.
-    if re.fullmatch(r"-?\d+(\.\d+)?", expected_norm):
+    # Numeric answers often come with the working shown. The conclusion is
+    # usually the *last* number, not the first: "100-37=63, 63*2=126" must score
+    # against 126, while taking numbers[0] would score it against 100.
+    if re.fullmatch(r"-?\d+(?:\.\d+)?", expected_norm):
         numbers = re.findall(r"-?\d+(?:\.\d+)?", answer_norm)
-        return (1.0 if numbers and numbers[0] == expected_norm else 0.0), choice
+        if not numbers:
+            return 0.0, choice
+        return (1.0 if numbers[-1] == expected_norm else 0.0), choice
 
     return 0.0, choice

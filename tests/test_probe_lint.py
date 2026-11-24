@@ -44,6 +44,20 @@ class LintExpectedTests(unittest.TestCase):
 
 
 class LintPromptTests(unittest.TestCase):
+    def test_digit_sum_mismatch_is_error(self):
+        issues = lint_probes(
+            [probe("p9a", "一个三位数各位数字之和为 15，十位是 7，这个数是？", "673", category="reasoning")]
+        )
+        self.assertIn("digit_sum_mismatch", codes(issues))
+
+    def test_digit_sum_consistent_passes(self):
+        self.assertEqual(
+            lint_probes(
+                [probe("p9b", "一个三位数各位数字之和为 15，十位是 7，这个数是？", "573", category="reasoning")]
+            ),
+            [],
+        )
+
     def test_unexpanded_field_is_error(self):
         issues = lint_probes([probe("p9", "计算 {a} + {b}", "3")])
         self.assertIn("unexpanded_field", codes(issues))

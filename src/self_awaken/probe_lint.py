@@ -26,6 +26,7 @@ _EXPR_CALL_RE = re.compile(r"\b(str|int|len|round|abs|float|sum|sorted)\(")
 # A template slot that never got filled: "A/B/C", "OK/YES/TRUE", "1/2/3/4".
 _SLOT_RE = re.compile(r"(?:[A-Za-z\u4e00-\u9fff0-9]+/){2,}[A-Za-z\u4e00-\u9fff0-9]+")
 _ARITH_CAPTURE_RE = re.compile(r"([0-9()\s.+\-*/]+)=\s*\?")
+_DIGIT_SUM_RE = re.compile(r"各位数字之和为\s*(\d+)")
 
 
 @dataclass(frozen=True)
@@ -109,6 +110,19 @@ def _lint_expected(probe: Probe) -> list[Issue]:
                     probe.id,
                     "arithmetic_mismatch",
                     f"prompt computes {declared:g}, expected says {text}",
+                )
+            )
+
+    digit_sum = _DIGIT_SUM_RE.search(probe.prompt)
+    if digit_sum and re.fullmatch(r"\d{2,}", text):
+        total = sum(int(char) for char in text)
+        if total != int(digit_sum.group(1)):
+            issues.append(
+                Issue(
+                    "error",
+                    probe.id,
+                    "digit_sum_mismatch",
+                    f"prompt says digit sum {digit_sum.group(1)}, but {text} sums to {total}",
                 )
             )
 

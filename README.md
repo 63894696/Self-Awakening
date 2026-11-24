@@ -7,7 +7,7 @@
 [![License](https://img.shields.io/badge/license-AGPL--3.0--or--later-blue.svg)](LICENSE)
 ![Stage](https://img.shields.io/badge/stage-0.1%20MVP-orange)
 ![Probes](https://img.shields.io/badge/probes-68-blue)
-![Tests](https://img.shields.io/badge/tests-73%20passed-brightgreen)
+![Tests](https://img.shields.io/badge/tests-91%20passed-brightgreen)
 
 [English](#english) · [中文](#中文)
 
@@ -120,6 +120,18 @@ flagship.
 
 Packs: `smoke` (12 probes), `standard` (24), `deep` (all). Early stopping means a
 strong endpoint usually finishes in 11 probes.
+
+### Repeats are free
+
+Successful answers are cached by (endpoint, model, prompt, temperature) in a
+platform cache file, so re-checking the same endpoint costs **0 tokens**. Fixing
+a bad answer key and re-running is also free: stored answers are re-scored.
+
+```bash
+self-awaken check ... --cache path/to/cache.jsonl   # pin the cache (CI)
+self-awaken check ... --no-cache                    # bypass
+self-awaken check ... --clear-cache                 # start clean
+```
 
 ## What it does and does not do
 
@@ -286,9 +298,31 @@ self-awaken lint-probes --probes data/probes
 
 题量档位：`smoke`（12）、`standard`（24）、`deep`（全部）。命中即停。
 
+### 重复检查不花钱
+
+成功回答按 (endpoint, model, prompt, temperature) 缓存到平台缓存目录，同一接口复检 **0 token**；修正答案键后复跑也不花钱（缓存的回答按新键重新打分）。
+
+```bash
+self-awaken check ... --cache path/to/cache.jsonl   # 固定缓存路径（CI）
+self-awaken check ... --no-cache                    # 绕过缓存
+self-awaken check ... --clear-cache                 # 清空重来
+```
+
+### 实测（2026-11-25，`smoke`，真实接口）
+
+| 档位 | deepseek-chat | glm-5.3 | claude-sonnet-4-6（中转） |
+| --- | --- | --- | --- |
+| `code` | SUFFICIENT · 830 tok | SUFFICIENT · 3 016 tok | SUFFICIENT · 1 390 tok |
+| `reasoning` | SUFFICIENT · 534 tok | SUFFICIENT · 5 616 tok | SUFFICIENT · 2 845 tok |
+| `instruction` | SUFFICIENT · 280 tok | SUFFICIENT · 2 264 tok | UNDETERMINED · 0.92 · 528 tok |
+
+弱模型对照 `glm-4-flash` 在 `code` 档被判 `INSUFFICIENT`（0.65），说明规则不是"一律通过"。
+
+Sonnet 在 `instruction` 档漏了 `instruction-003`（把 2+2 用三个英文单词写成 "two plus four"），这是真实的能力/指令偏差，不是评分误判。
+
 ## 做与不做
 
-**做**：按阈值给能力区间、早停与预算控制、保留逐题证据、题库缺陷检查（占位符/未求值答案/算错答案/重复题）。
+**做**：按阈值给能力区间、早停与预算控制、答案缓存、保留逐题证据、题库缺陷检查（占位符 / 未求值答案 / 算错答案 / 数字和矛盾 / 重复题）。
 
 **不做**：证明模型身份；测长上下文、工具调用、视觉、并发吞吐；替代合同或 SLA。
 

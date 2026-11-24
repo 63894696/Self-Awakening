@@ -67,6 +67,46 @@ estimated_tokens: 2986
 no request was made
 ```
 
+### Answer cache: repeats are free
+
+`check` caches every successful answer in a platform cache file
+(`%LOCALAPPDATA%\self-awaken\answers.jsonl` on Windows,
+`~/.cache/self-awaken/answers.jsonl` elsewhere) and reuses it when the
+effective request is identical.
+
+The cache key covers endpoint, model, prompt, and temperature. It deliberately
+does **not** cover the expected answer, so fixing a bad answer key and re-running
+a report costs nothing — the stored answers are simply re-scored.
+
+Measured on the 2026-11-25 runs:
+
+| Run | Tokens spent | Cache hits |
+| --- | ---: | ---: |
+| `code` first run (deepseek-chat) | 415 | 0 |
+| `code` repeat, same endpoint | **0** | 11 |
+| `reasoning` re-run after fixing an answer key (sonnet) | **0** | 10 |
+| `instruction` re-run (deepseek-chat) | 40 | 10 |
+
+Guarantees:
+
+- Errors and truncated answers are never cached, so a rate limit cannot turn into
+  a permanent "wrong answer".
+- A different model or endpoint never hits another one's entries — that would
+  hide exactly the substitution the tool exists to catch.
+- `--no-cache` bypasses it; `--clear-cache` starts clean; `--cache <path>` pins a
+  specific file (useful in CI).
+
+### Scoring that does not punish formatting
+
+Two rules matter for honest verdicts:
+
+- **Numeric answers use the last number, not the first.** "100-37=63, 63×2=**126**"
+  must score against 126; the old first-number rule scored it against 100 and
+  failed a correct model.
+- **Choice answers are read from the conclusion.** A model that restates
+  "A … wrong, B … wrong" and ends with `**B**` is correct; matching the first
+  letter it mentions marked it wrong.
+
 Two more protections keep measurement artifacts from being scored as capability
 failures:
 
@@ -95,8 +135,10 @@ clear them and a materially weaker model does not (see below). Override with
 
 ## Measured calibration (2026-11-25)
 
-`code` profile, `--pack standard`, `--max-tokens 200`, run locally against three
-endpoints:
+`--pack smoke`, `--max-tokens 200-256`, run locally against three endpoints plus
+a weak control.
+
+### `code` profile
 
 | Endpoint | Verdict | Accuracy | Probes run | Tokens |
 | --- | --- | --- | ---: | ---: |
@@ -105,11 +147,32 @@ endpoints:
 | `claude-sonnet-4-6` (relay) | SUFFICIENT | 1.00 | 11 | 1 390 |
 | `glm-4-flash` (weak control) | INSUFFICIENT | 0.65 | 23 | 2 196 |
 
+### `reasoning` profile (logic + reasoning, threshold 0.75)
+
+| Endpoint | Verdict | Accuracy | Probes run | Tokens |
+| --- | --- | --- | ---: | ---: |
+| `deepseek-chat` | SUFFICIENT | 1.00 | 10 | 534 |
+| `glm-5.3` | SUFFICIENT | 1.00 | 10 | 5 616 |
+| `claude-sonnet-4-6` | SUFFICIENT | 1.00 | 10 | 2 845 |
+
+GLM burns an order of magnitude more tokens here: it writes a long analysis to
+simple questions, and part of that spend is a truncation retry.
+
+### `instruction` profile (instruction + math, threshold 0.80)
+
+| Endpoint | Verdict | Accuracy | Probes run | Tokens |
+| --- | --- | --- | ---: | ---: |
+| `deepseek-chat` | SUFFICIENT | 1.00 | 11 | 280 |
+| `glm-5.3` | SUFFICIENT | 1.00 | 11 | 2 264 |
+| `claude-sonnet-4-6` | UNDETERMINED | 0.92 | 12 | 528 |
+
+Sonnet missed `instruction-003` (wrote "two plus four" for 2+2 in three English
+words). That is a real instruction/arithmetic slip, not a scoring artifact — the
+probe stays in the bank as a discriminator, and one miss out of twelve correctly
+refuses to certify the floor.
+
 The weak control matters as much as the strong ones: the rule has to be able to
 say "no". A verdict that everything passes is not an audit.
-
-The GLM run consumed more tokens because the model truncates answers inside a
-200-token cap; the retry path is what keeps that from becoming a false failure.
 
 ## Exit codes
 
@@ -144,7 +207,16 @@ have actually shipped in this project's history:
 - unevaluated Python expressions as expected values (`int(5882 ** 0.5)`)
 - prompts with unexpanded template slots (`OK/YES/TRUE`, `len('a'/'b')`)
 - arithmetic prompts whose expected value does not match the expression
+- digit-sum puzzles whose expected number has the wrong digit sum
 - duplicate ids and duplicate prompts
+
+Two answer keys were caught this way during calibration: `instruction-003`
+expected a four-word string for a prompt demanding exactly three words, and
+`reasoning-006` expected 673 for a puzzle whose only solution is 573. Both would
+have marked a correct model wrong.
+
+Logic and factual answer keys still need human review — lint can verify
+arithmetic and digit sums, not whether a syllogism was stated correctly.
 
 `data/probe_templates.jsonl` holds authoring templates (parameter ranges plus an
 expected-value expression). A generated batch is only usable after every

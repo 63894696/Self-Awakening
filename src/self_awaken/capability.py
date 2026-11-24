@@ -185,6 +185,7 @@ def check_capability(
     token_budget: int | None = None,
     max_probes: int | None = None,
     min_probes: int = 10,
+    cache: Any = None,
     on_progress: Any = None,
 ) -> dict[str, Any]:
     """Run the smallest probe sequence that decides the verdict."""
@@ -232,19 +233,34 @@ def check_capability(
         prompt_tokens = completion_tokens = None
         score: float | None = None
         choice: str | None = None
+        cached = False
+        key = None
+        if cache is not None:
+            from .answer_cache import cache_key
+
+            key = cache_key(endpoint=endpoint, model=model, prompt=probe.prompt, temperature=temperature)
+
         try:
-            completion = client.complete(probe.prompt, temperature=temperature, max_tokens=max_tokens)
-            used_tokens += (completion.prompt_tokens or max(1, len(probe.prompt))) + (completion.completion_tokens or 0)
-            # Reasoning models spend output tokens on hidden thinking. If the answer
-            # was cut off by the cap, retry once with a larger budget instead of
-            # scoring a truncated string as a wrong answer.
-            if getattr(completion, "finish_reason", None) == "length" and max_tokens < 2048:
-                retry_tokens = max(512, max_tokens * 4)
-                completion = client.complete(probe.prompt, temperature=temperature, max_tokens=retry_tokens)
-                used_tokens += (
-                    (completion.prompt_tokens or max(1, len(probe.prompt)))
-                    + (completion.completion_tokens or 0)
-                )
+            completion = None
+            if cache is not None and key is not None:
+                hit = cache.get(key)
+                if hit is not None:
+                    completion = hit.as_completion()
+                    cached = True
+
+            if completion is None:
+                completion = client.complete(probe.prompt, temperature=temperature, max_tokens=max_tokens)
+                used_tokens += (completion.prompt_tokens or max(1, len(probe.prompt))) + (completion.completion_tokens or 0)
+                # Reasoning models spend output tokens on hidden thinking. If the answer
+                # was cut off by the cap, retry once with a larger budget instead of
+                # scoring a truncated string as a wrong answer.
+                if getattr(completion, "finish_reason", None) == "length" and max_tokens < 2048:
+                    retry_tokens = max(512, max_tokens * 4)
+                    completion = client.complete(probe.prompt, temperature=temperature, max_tokens=retry_tokens)
+                    used_tokens += (
+                        (completion.prompt_tokens or max(1, len(probe.prompt)))
+                        + (completion.completion_tokens or 0)
+                    )
             answer = completion.answer
             latency = completion.latency_ms
             prompt_tokens = completion.prompt_tokens
@@ -253,10 +269,11 @@ def check_capability(
                 error = "truncated_output"
             else:
                 score, choice = score_answer(probe.expected, answer)
+                if not cached and cache is not None and key is not None:
+                    cache.put(key, completion)
         except Exception as exc:  # noqa: BLE001 - keep per-probe failures in the report.
             error = _format_probe_error(exc)
 
-        used_tokens += (prompt_tokens or max(1, len(probe.prompt))) + (completion_tokens or 0)
         results.append(
             {
                 "probe_id": probe.id,
@@ -270,6 +287,7 @@ def check_capability(
                 "prompt_tokens": prompt_tokens,
                 "completion_tokens": completion_tokens,
                 "error": error,
+                "cached": cached,
             }
         )
 
@@ -317,6 +335,7 @@ def check_capability(
         "confidence_interval": [round(verdict.low, 4), round(verdict.high, 4)],
         "probes_run": len(results),
         "probes_planned": len(selected),
+        "cache_hits": sum(1 for r in results if r.get("cached")),
         "estimated_tokens": estimate,
         "used_tokens": used_tokens,
         "token_budget": token_budget,
@@ -339,7 +358,8 @@ def render_capability_report(report: dict[str, Any]) -> str:
         f"（{report['passed']}/{report['scored']}）",
         f"- 90% 置信区间：`[{report['confidence_interval'][0]:.2f}, "
         f"{report['confidence_interval'][1]:.2f}]`",
-        f"- 探针：运行 `{report['probes_run']}` / 计划 `{report['probes_planned']}`",
+        f"- 探针：运行 `{report['probes_run']}` / 计划 `{report['probes_planned']}`"
+        f"（缓存命中 `{report.get('cache_hits', 0)}`）",
         f"- token 消耗：约 `{report['used_tokens']}`（预算上限 "
         f"`{report['token_budget'] or '未设置'}`，预估 `{report['estimated_tokens']}`）",
         "",
