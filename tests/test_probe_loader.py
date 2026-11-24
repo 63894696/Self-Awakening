@@ -1,7 +1,7 @@
 import unittest
 import json
-from src.self_awaken.probe_loader import load_probes
-from src.self_awaken.models import Probe
+from self_awaken.probe_loader import load_probes
+from self_awaken.models import Probe
 
 class TestProbeLoader(unittest.TestCase):
     def test_load_single_probe(self):
