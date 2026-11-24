@@ -316,7 +316,7 @@ def check_capability(
         "scored": verdict.scored,
         "confidence_interval": [round(verdict.low, 4), round(verdict.high, 4)],
         "probes_run": len(results),
-        "probes_available": len(selected),
+        "probes_planned": len(selected),
         "estimated_tokens": estimate,
         "used_tokens": used_tokens,
         "token_budget": token_budget,
@@ -339,7 +339,7 @@ def render_capability_report(report: dict[str, Any]) -> str:
         f"（{report['passed']}/{report['scored']}）",
         f"- 90% 置信区间：`[{report['confidence_interval'][0]:.2f}, "
         f"{report['confidence_interval'][1]:.2f}]`",
-        f"- 探针：运行 `{report['probes_run']}` / 可用 `{report['probes_available']}`",
+        f"- 探针：运行 `{report['probes_run']}` / 计划 `{report['probes_planned']}`",
         f"- token 消耗：约 `{report['used_tokens']}`（预算上限 "
         f"`{report['token_budget'] or '未设置'}`，预估 `{report['estimated_tokens']}`）",
         "",
