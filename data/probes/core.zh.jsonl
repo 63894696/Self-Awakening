@@ -1,0 +1,9 @@
+{"id":"math-001","category":"math","prompt":"请只输出最终数字，不要解释：17 * 23 - 19 = ?","expected":"372","tags":["objective","arithmetic"]}
+{"id":"logic-001","category":"logic","prompt":"只选择 A、B、C 或 D。所有蓝色方块都很轻；有些很轻的物体会漂浮；这个物体是蓝色方块。下列哪项必然成立？A. 它会漂浮 B. 它很轻 C. 它不是方块 D. 它不是蓝色","expected":"B","tags":["objective","syllogism"]}
+{"id":"logic-002","category":"logic","prompt":"只选择 A、B、C 或 D。若今天下雨，则地面会湿。地面没有湿。可以推出：A. 今天下雨 B. 今天没有下雨 C. 明天会下雨 D. 无法判断","expected":"B","tags":["objective","modus-tollens"]}
+{"id":"code-001","category":"code","prompt":"只选择 A、B、C 或 D。Python 中表达式 bool([]) 的结果是：A. True B. False C. None D. 抛出异常","expected":"B","tags":["objective","python"]}
+{"id":"code-002","category":"code","prompt":"只输出最终结果，不要解释。Python 表达式 ''.join(str(i) for i in range(3)) 的结果是什么？","expected":"012","tags":["objective","python"]}
+{"id":"instruction-001","category":"instruction","prompt":"请严格按下面格式输出两行：第一行只写 OK，第二行只写 7。不要添加任何解释。","expected":"OK\n7","tags":["format","instruction-following"]}
+{"id":"knowledge-001","category":"knowledge","prompt":"只选择 A、B、C 或 D。HTTP 状态码 429 通常表示：A. 未授权 B. 请求过多 C. 永久重定向 D. 服务器内部错误","expected":"B","tags":["objective","web"]}
+{"id":"ambiguity-001","category":"reasoning","prompt":"有三个盒子，标签分别是苹果、橙子、苹果和橙子。每个标签都贴错了。你只能从一个盒子里拿出一个水果，就能确定所有盒子的内容。应该从哪个标签的盒子拿？只回答标签文字。","expected":"苹果和橙子","tags":["objective","classic-puzzle"]}
+

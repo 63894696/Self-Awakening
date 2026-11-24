@@ -1,184 +1,159 @@
-# Contributing to OI Enhancements
+# 贡献指南
 
-Thanks for considering contributing to OI Enhancements (Prisir AI,
-oiagent, prisir_findex, prisir_fcontent, fastlane, and related
-projects in this repository). This document explains how to
-contribute, what license Your contribution will be under, and how
-the project handles relicensing of past releases.
+感谢你对 Self-Awakening 的关注与贡献！本项目欢迎所有形式的贡献，包括但不限于：代码优化、探针题库扩展、文档完善、问题反馈和基线贡献。
 
+## 贡献方式
 
-## License of Your contribution
+### 🐛 报告问题
 
-By submitting a contribution (patch, pull request, code, document,
-icon, translation, or any other material) to this repository, You
-agree to the following:
+- 前往 [GitHub Issues](https://github.com/63894696/Self-Awakening/issues) 创建 Issue
+- 选择合适的标签：`bug`、`enhancement`、`question`、`documentation`
+- 提供清晰的问题描述和复现步骤
+- 如果是探针题库问题，请附上具体的探针 ID 和预期/实际结果
 
-### Developer Certificate of Origin (DCO) — required
+### 📝 完善文档
 
-All commits MUST be signed off using the DCO. Add a `-s` flag to
-`git commit`, which adds a `Signed-off-by:` line to the commit
-message:
+- 拼写修正、语法优化
+- 补充遗漏的使用场景
+- 翻译成更多语言（当前支持中英文）
+- 完善 README 中的示例
 
-```
-Signed-off-by: Your Name <your.email@example.com>
-```
+### 🔬 贡献探针题库
 
-The `Signed-off-by:` line certifies, under penalty of perjury, that:
+探针是 Self-Awakening 的核心资产。我们欢迎社区贡献高质量的探针。
 
-> (a) I created this contribution myself, OR
-> (b) I have the right to submit it under the project's license, OR
-> (c) I have received explicit permission from the contributor to
->     submit it on their behalf.
+#### 探针格式要求
 
-This is the [Developer Certificate of Origin 1.1](https://developercertificate.org/).
-The full text is at the bottom of this document.
+每个探针必须是 JSONL 格式的一行，包含以下字段：
 
-
-### Contributor License Agreement (CLA) — required for substantial contributions
-
-For contributions larger than ~200 lines OR contributions to Core
-Components (see CORE-COMPONENTS.md) OR any contribution that will
-be part of a release that the Project Copyright Holder intends to
-relicense under Apache-2.0 (see LICENSE-POLICY.md), You must also
-sign a CLA.
-
-The CLA grants the Project Copyright Holder the right to:
-
-- redistribute Your contribution under the project's current license
-  (OIE-PCS-1.0);
-- redistribute Your contribution under any Future License that the
-  Project Copyright Holder may choose to apply to that release
-  (including Apache-2.0);
-- hold copyright for the purpose of enforcing the project license.
-
-The CLA does NOT transfer ownership of Your contribution to the
-Project Copyright Holder; You retain copyright and are credited
-in the NOTICE / AUTHORS file as appropriate.
-
-The CLA process is light-weight: a per-PR bot will ask You to
-sign the CLA via GitHub (electronic signature is sufficient).
-
-
-### Why we ask for DCO + CLA
-
-The DCO certifies Your right to submit. The CLA preserves the
-Project Copyright Holder's ability to apply **Future Licenses** as
-described in LICENSE-POLICY.md. Without CLA, the Project Copyright
-Holder cannot safely relicense a release under Apache-2.0 because
-there would be no record of Your consent.
-
-The CLA does **not** allow the Project Copyright Holder to do
-anything other than what LICENSE-POLICY.md already says is the
-project's intent. It is purely an evidence-of-consent mechanism.
-
-
-## How to submit a contribution
-
-1. **Fork** the repository on GitHub.
-2. **Create a feature branch** (`git checkout -b my-feature`).
-3. **Make your changes**. Add tests where reasonable.
-4. **Sign off** each commit (`git commit -s`).
-5. **Push** the branch to Your fork.
-6. **Open a Pull Request** against `master` of the upstream.
-
-The maintainers will review Your PR. Reviews may take 5–15 business
-days. We may ask for changes, additional tests, or documentation.
-
-### Coding style
-
-- Python: PEP 8; type hints where reasonable; comments in
-  Simplified Chinese / English.
-- JavaScript / TypeScript: 2-space indent; match existing style in
-  the same file.
-- Rust: standard `cargo fmt` and `cargo clippy`.
-- Use the existing logging and error-handling patterns of the
-  module You are editing.
-
-
-## What kinds of contributions are welcome
-
-| Kind | Welcome? | Notes |
-| ---- | -------- | ----- |
-| Bug fix | yes | add a regression test if practical |
-| Documentation fix | yes | typo / clarity / translation |
-| Performance improvement | yes | include before/after numbers |
-| New tool / connector | yes | if it fits the project scope |
-| New LLM provider in fastlane | yes | add adapter + tests |
-| Translation (UI strings) | yes | PRs to docs/ and assets |
-| New icon / logo | discuss first | Brand policy applies |
-| Major architectural change | discuss first | open an issue first |
-| Anything that adds a network call to a third-party server | discuss first | privacy / egress discipline |
-| Re-branding the project under a different name | NO | this is the original project |
-
-
-## What kinds of contributions are NOT accepted
-
-- Anything that adds advertising, tracking, or telemetry to the
-  Software without the user's informed consent.
-- Anything that weakens the LICENSE §3 source-availability obligation
-  for Core Components.
-- Anything that takes code from a third-party project whose license
-  is incompatible with OIE-PCS-1.0 (e.g. GPLv3-only code into MIT
-  modules), unless properly isolated.
-- Anything that introduces a non-trivial dependency on a non-open
-  source library, without prior approval.
-
-
-## Code of conduct
-
-We follow the Contributor Covenant 2.1. The full text is at
-https://www.contributor-covenant.org/version/2/1/code_of_conduct/.
-
-In short: be respectful, be constructive, assume good faith, and
-focus on the technical merits.
-
-
-## Security vulnerabilities
-
-If You find a security issue, **DO NOT open a public issue**. Send
-a private email to the address in COMMERCIAL-LICENSE.md, or use
-GitHub's private vulnerability reporting. We aim to acknowledge
-within 3 business days.
-
-
-## Release process
-
-Releases are tagged on `master`. Each release tag is immutable;
-the LICENSE / LICENSE-APACHE / CORE-COMPONENTS.md state at the tag
-governs that release. LICENSE-POLICY.md describes when a release
-transitions to Legacy Community Release under Apache-2.0.
-
-
-## DCO full text (1.1)
-
-```
-Developer Certificate of Origin
-Version 1.1
-
-By making a contribution to this project, I certify that:
-
-(a) The contribution was created in whole or in part by me and I
-    have the right to submit it under the open source license
-    indicated in the file; or
-
-(b) The contribution is based upon previous work that, to the best
-    of my knowledge, is covered under an appropriate open source
-    license and I have the right under that license to submit that
-    work with modifications, whether created in whole or in part
-    by me, under the same open source license (unless I am
-    permitted to submit under a different license), as indicated
-    in the file; or
-
-(c) The contribution was provided directly to me by some other
-    person who certified (a), (b) or (c) and I have not modified
-    it.
-
-(d) I understand and agree that this project and the contribution
-    are public and that a record of the contribution (including all
-    personal information I submit with it, including my sign-off) is
-    maintained indefinitely and may be redistributed consistent with
-    this project or the open source license(s) involved.
+```json
+{
+  "id": "unique-probe-id",
+  "category": "math|logic|code|instruction|knowledge|ambiguity|language",
+  "prompt": "探针的完整题目内容",
+  "expected": "预期的正确答案或格式",
+  "scoring": "exact|contains|numeric|choice",
+  "difficulty": "easy|medium|hard",
+  "leak_risk": "low|medium|high",
+  "tags": ["tag1", "tag2"],
+  "language": "zh|en|multilingual",
+  "notes": "可选的补充说明"
+}
 ```
 
+#### 探针贡献审核标准
 
-Last updated: 2026-08-28
+| 标准 | 要求 |
+|------|------|
+| **区分度** | 能区分至少 2 个不同的模型（如 Opus vs Sonnet） |
+| **无泄漏** | 题目和答案不应大量出现在常见训练数据中 |
+| **可复现** | 在 temperature=0 时结果稳定 |
+| **无偏见** | 不偏向特定文化、地域或政治立场 |
+| **格式正确** | 通过 JSON 语法验证 |
+
+#### 提交探针的流程
+
+1. 在 `data/probes/` 目录下创建新的 JSONL 文件（或追加到现有文件）
+2. 使用 `self-awaken list-probes --probes data/probes` 验证格式
+3. 运行 `pytest tests/` 确保不破坏现有测试
+4. 提交 Pull Request，标题格式：`[Probe] <探针主题描述>`
+
+### 📊 贡献基线指纹
+
+基线指纹是项目的信任锚点。我们欢迎社区贡献官方接口的运行结果。
+
+#### 基线贡献审核标准
+
+| 标准 | 要求 |
+|------|------|
+| **来源可信** | 必须是官方直连接口（OpenAI、Anthropic、Claude 等） |
+| **参数透明** | 必须记录 temperature、max_tokens、模型版本 |
+| **可复现** | 同一模型至少运行 3 次，结果方差 < 5% |
+| **去标识化** | 不包含 API 密钥或敏感信息 |
+
+#### 基线贡献流程
+
+1. 使用官方接口运行审计：`self-awaken run --endpoint <官方接口> ...`
+2. 生成基线：`self-awaken make-baseline --run runs/official.json --name "官方模型X" --out data/baselines/official-model-x.json`
+3. 在 PR 中说明：
+   - 运行日期和环境
+   - 使用的是哪个官方接口
+   - 模型版本和参数设置
+   - 任何观察到的异常
+
+### 💻 贡献代码
+
+#### 开发环境设置
+
+```bash
+# 克隆仓库
+git clone https://github.com/63894696/Self-Awakening.git
+cd Self-Awakening
+
+# 创建虚拟环境（推荐）
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# 或 venv\Scripts\activate  # Windows
+
+# 安装开发依赖
+pip install -e ".[web]"
+
+# 运行测试
+pytest tests/ -q
+```
+
+#### 代码规范
+
+- 遵循 PEP 8 Python 代码风格
+- 所有新增功能必须有对应的单元测试
+- 使用类型注解（type hints）增强可读性
+- 提交前运行 `pytest tests/ -q` 确保通过
+
+#### Pull Request 流程
+
+1. Fork 仓库并创建功能分支：`git checkout -b feature/your-feature-name`
+2. 进行开发并添加测试
+3. 提交时使用清晰的 commit message（中文或英文均可）
+4. 提交 Pull Request，描述变更内容和动机
+5. 等待代码审查，可能需要根据反馈进行调整
+
+## 项目结构参考
+
+```
+Self-Awakening/
+├── src/self_awaken/      # 核心代码
+│   ├── cli.py           # 命令行入口
+│   ├── client.py        # API 客户端
+│   ├── scoring.py       # 评分逻辑
+│   ├── fingerprint.py   # 指纹比对
+│   └── reporting.py     # 报告生成
+├── data/
+│   ├── probes/          # 探针题库
+│   └── baselines/       # 基线指纹
+├── docs/                # 文档
+│   ├── ARCHITECTURE.md  # 架构说明
+│   ├── REPORT_GUIDE.md  # 报告解读指南
+│   └── VERIFICATION.md # 验证记录
+└── tests/               # 单元测试
+```
+
+## Agent 协作指南
+
+本项目设计为多 Agent 协作开发。如果你是一个新的 Agent，请阅读 [AGENT_HANDOFF.md](docs/AGENT_HANDOFF.md) 了解当前的任务状态和分工。
+
+## 行为准则
+
+我们期望所有贡献者遵守以下行为准则：
+
+- **尊重他人**：尊重不同的观点和技术选择
+- **建设性反馈**：提出批评时保持友善和建设性
+- **包容性**：欢迎来自不同背景的贡献者
+- **专业性**：保持技术讨论的专业性，避免人身攻击
+
+## 许可证
+
+通过贡献代码，你同意你的贡献将遵循 [MIT 许可证](LICENSE)。
+
+---
+
+有任何问题？请在 [GitHub Discussions](https://github.com/63894696/Self-Awakening/discussions) 中提问，或创建 Issue 进行反馈。

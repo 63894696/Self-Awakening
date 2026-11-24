@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "kind": "baseline",
+  "name": "LFM 1.2B Baseline",
+  "created_at": "2026-05-30T06:55:06+00:00",
+  "source": {
+    "requested_model": "liquid/lfm-2.5-1.2b-thinking:free",
+    "endpoint": "https://openrouter.ai/api/v1",
+    "temperature": 0.0,
+    "max_tokens": 512
+  },
+  "summary": {
+    "probe_count": 8,
+    "scored_count": 4,
+    "accuracy": 1.0,
+    "avg_latency_ms": 2371.12,
+    "avg_completion_tokens": 366.5,
+    "error_count": 4
+  },
+  "probes": {
+    "math-001": {
+      "category": "math",
+      "score": 1.0,
+      "choice": null,
+      "answer_digest": "62f77e7d6197863a",
+      "completion_tokens": 333
+    },
+    "logic-001": {
+      "category": "logic",
+      "score": null,
+      "choice": null,
+      "answer_digest": "e3b0c44298fc1c14",
+      "completion_tokens": null
+    },
+    "logic-002": {
+      "category": "logic",
+      "score": null,
+      "choice": null,
+      "answer_digest": "e3b0c44298fc1c14",
+      "completion_tokens": null
+    },
+    "code-001": {
+      "category": "code",
+      "score": 1.0,
+      "choice": "B",
+      "answer_digest": "842feab55332f9a3",
+      "completion_tokens": 512
+    },
+    "code-002": {
+      "category": "code",
+      "score": 1.0,
+      "choice": null,
+      "answer_digest": "361977f76573001b",
+      "completion_tokens": 273
+    },
+    "instruction-001": {
+      "category": "instruction",
+      "score": 1.0,
+      "choice": null,
+      "answer_digest": "238007bab679e933",
+      "completion_tokens": 348
+    },
+    "knowledge-001": {
+      "category": "knowledge",
+      "score": null,
+      "choice": null,
+      "answer_digest": "e3b0c44298fc1c14",
+      "completion_tokens": null
+    },
+    "ambiguity-001": {
+      "category": "reasoning",
+      "score": null,
+      "choice": null,
+      "answer_digest": "e3b0c44298fc1c14",
+      "completion_tokens": null
+    }
+  }
+}

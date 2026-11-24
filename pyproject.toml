@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "self-awakening"
+version = "0.1.0"
+description = "Black-box transparency audit toolkit for model identity and capability fingerprinting."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [
+  { name = "Self-Awakening contributors" }
+]
+keywords = ["ai", "audit", "benchmark", "fingerprint", "transparency"]
+dependencies = []
+
+[project.optional-dependencies]
+web = ["flask>=3.0"]
+
+[project.scripts]
+self-awaken = "self_awaken.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+

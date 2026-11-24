@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "kind": "baseline",
+  "name": "Demo baseline for development only",
+  "created_at": "2026-05-22T00:00:00+00:00",
+  "source": {
+    "requested_model": "demo/mock-model",
+    "endpoint": "local/mock",
+    "temperature": 0,
+    "max_tokens": 512
+  },
+  "summary": {
+    "probe_count": 8,
+    "scored_count": 8,
+    "accuracy": 1.0,
+    "avg_latency_ms": 100,
+    "avg_completion_tokens": 4,
+    "error_count": 0
+  },
+  "probes": {
+    "math-001": {
+      "category": "math",
+      "score": 1.0,
+      "choice": null,
+      "answer_digest": "62f77e7d6197863a",
+      "completion_tokens": 1
+    },
+    "logic-001": {
+      "category": "logic",
+      "score": 1.0,
+      "choice": "B",
+      "answer_digest": "3e23e8160039594a",
+      "completion_tokens": 1
+    },
+    "logic-002": {
+      "category": "logic",
+      "score": 1.0,
+      "choice": "B",
+      "answer_digest": "3e23e8160039594a",
+      "completion_tokens": 1
+    },
+    "code-001": {
+      "category": "code",
+      "score": 1.0,
+      "choice": "B",
+      "answer_digest": "3e23e8160039594a",
+      "completion_tokens": 1
+    },
+    "code-002": {
+      "category": "code",
+      "score": 1.0,
+      "choice": null,
+      "answer_digest": "bf6aaaab7c143ca1",
+      "completion_tokens": 1
+    },
+    "instruction-001": {
+      "category": "instruction",
+      "score": 1.0,
+      "choice": null,
+      "answer_digest": "238007bab679e933",
+      "completion_tokens": 2
+    },
+    "knowledge-001": {
+      "category": "knowledge",
+      "score": 1.0,
+      "choice": "B",
+      "answer_digest": "3e23e8160039594a",
+      "completion_tokens": 1
+    },
+    "ambiguity-001": {
+      "category": "reasoning",
+      "score": 1.0,
+      "choice": null,
+      "answer_digest": "e348d8d056499265",
+      "completion_tokens": 4
+    }
+  }
+}

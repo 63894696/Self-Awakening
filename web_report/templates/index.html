@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>Self-Awaken Reports</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main>
+    <h1>Self-Awaken 审计报告</h1>
+    <p>选择一次运行查看详情：</p>
+    <ul>
+      {% for run_id in runs %}
+      <li><a href="{{ url_for('report', run_id=run_id) }}">{{ run_id }}</a></li>
+      {% else %}
+      <li>暂无 runs/*.json 文件，请先执行 CLI 生成审计结果。</li>
+      {% endfor %}
+    </ul>
+  </main>
+</body>
+</html>
