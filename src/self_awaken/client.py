@@ -21,6 +21,7 @@ class ChatCompletion:
     completion_tokens: int | None
     total_tokens: int | None
     raw_model: str | None = None
+    finish_reason: str | None = None
 
 
 class OpenAICompatibleClient:
@@ -88,6 +89,7 @@ class OpenAICompatibleClient:
                 completion_tokens=_optional_int(usage.get("completion_tokens")),
                 total_tokens=_optional_int(usage.get("total_tokens")),
                 raw_model=str(data.get("model")) if isinstance(data, dict) and data.get("model") else None,
+                finish_reason=_extract_finish_reason(data),
             )
 
         if last_content_error:
@@ -168,3 +170,11 @@ def _optional_int(value: Any) -> int | None:
         return int(value)
     except (TypeError, ValueError):
         return None
+
+
+def _extract_finish_reason(data: dict[str, Any]) -> str | None:
+    choices = data.get("choices")
+    if not choices or not isinstance(choices[0], dict):
+        return None
+    reason = choices[0].get("finish_reason")
+    return str(reason) if reason is not None else None

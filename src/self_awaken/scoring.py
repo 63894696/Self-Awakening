@@ -19,6 +19,28 @@ def normalize_text(value: str) -> str:
     return value
 
 
+_FENCE_RE = re.compile(r"^```[A-Za-z0-9_+.-]*\s*|\s*```$")
+
+
+def canonicalize(value: str) -> str:
+    """Normalize a free-form answer before exact comparison.
+
+    Models wrap short answers in markdown, quotes, or backticks (```'ababab'```,
+    `` `[0, 1, 2]` ``). Those are formatting choices, not capability failures, so
+    they must not be scored as wrong answers.
+    """
+    text = unicodedata.normalize("NFKC", str(value or "")).strip()
+    text = _FENCE_RE.sub("", text).strip()
+    text = text.strip("`").strip()
+    if len(text) >= 2 and text[0] == text[-1] and text[0] in "\"'":
+        text = text[1:-1].strip()
+    text = text.strip("`").strip()
+    text = re.sub(r"\s*([\[\](){}])\s*", r"\1", text)
+    text = re.sub(r"\s*,\s*", ",", text)
+    text = re.sub(r"\s+", " ", text)
+    return text.lower()
+
+
 def answer_digest(answer: str) -> str:
     return hashlib.sha256(normalize_text(answer).encode("utf-8")).hexdigest()[:16]
 
@@ -41,13 +63,13 @@ def score_answer(expected: str | None, answer: str) -> tuple[float | None, str |
     if expected is None:
         return None, extract_choice(answer)
 
-    expected_norm = normalize_text(expected)
+    expected_norm = canonicalize(expected)
     choice = extract_choice(answer)
 
     if re.fullmatch(r"[a-e]", expected_norm):
         return (1.0 if choice == expected_norm.upper() else 0.0), choice
 
-    answer_norm = normalize_text(answer)
+    answer_norm = canonicalize(answer)
     if answer_norm == expected_norm:
         return 1.0, choice
 

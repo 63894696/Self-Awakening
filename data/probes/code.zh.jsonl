@@ -1,0 +1,17 @@
+{"id": "code-101", "category": "code", "prompt": "只输出最终结果，不要解释。Python 表达式 `7 // 2` 的值是什么？", "expected": "3", "tags": ["objective", "python", "derived"]}
+{"id": "code-102", "category": "code", "prompt": "只输出最终结果，不要解释。Python 表达式 `len('你好abc')` 的值是什么？", "expected": "5", "tags": ["objective", "python", "derived"]}
+{"id": "code-103", "category": "code", "prompt": "只输出最终结果，不要解释。Python 表达式 `[1, 2, 3][-1]` 的值是什么？", "expected": "3", "tags": ["objective", "python", "derived"]}
+{"id": "code-104", "category": "code", "prompt": "只输出最终结果，不要解释。Python 表达式 `1 + 2 * 3 ** 2` 的值是什么？", "expected": "19", "tags": ["objective", "python", "derived"]}
+{"id": "code-105", "category": "code", "prompt": "只输出最终结果，不要解释。Python 表达式 `3 / 2` 的值是什么？", "expected": "1.5", "tags": ["objective", "python", "derived"]}
+{"id": "code-106", "category": "code", "prompt": "只输出最终结果，不要解释。Python 表达式 `7 % 4` 的值是什么？", "expected": "3", "tags": ["objective", "python", "derived"]}
+{"id": "code-107", "category": "code", "prompt": "只输出最终结果，不要解释。Python 表达式 `len(set([1, 1, 2, 3, 3]))` 的值是什么？", "expected": "3", "tags": ["objective", "python", "derived"]}
+{"id": "code-108", "category": "code", "prompt": "只输出最终结果，不要解释。Python 表达式 `sum(range(2, 8, 3))` 的值是什么？", "expected": "7", "tags": ["objective", "python", "derived"]}
+{"id": "code-109", "category": "code", "prompt": "只输出最终结果，不要解释。Python 表达式 `int('3' * 2)` 的值是什么？", "expected": "33", "tags": ["objective", "python", "derived"]}
+{"id": "code-110", "category": "code", "prompt": "只输出最终结果，不要解释。Python 表达式 `5 and 0 or 7` 的值是什么？", "expected": "7", "tags": ["objective", "python", "derived"]}
+{"id": "code-111", "category": "code", "prompt": "只输出最终结果，不要解释。Python 表达式 `{'a': 1}.get('b', 0)` 的值是什么？", "expected": "0", "tags": ["objective", "python", "derived"]}
+{"id": "code-112", "category": "code", "prompt": "只输出最终结果，不要解释。Python 表达式 `[x * 2 for x in range(3)][-1]` 的值是什么？", "expected": "4", "tags": ["objective", "python", "derived"]}
+{"id": "code-113", "category": "code", "prompt": "只输出最终结果，不要解释。Python 表达式 `2 ** 10` 的值是什么？", "expected": "1024", "tags": ["objective", "python", "derived"]}
+{"id": "code-114", "category": "code", "prompt": "只输出最终结果，不要解释。Python 表达式 `-7 // 2` 的值是什么？", "expected": "-4", "tags": ["objective", "python", "derived"]}
+{"id": "code-115", "category": "code", "prompt": "只输出最终结果，不要解释。Python 表达式 `len([1, [2, 3]][1])` 的值是什么？", "expected": "2", "tags": ["objective", "python", "derived"]}
+{"id": "code-117", "category": "code", "prompt": "只输出最终结果，不要解释。Python 表达式 `sorted([3, 1, 2])[0]` 的值是什么？", "expected": "1", "tags": ["objective", "python", "derived"]}
+{"id": "code-118", "category": "code", "prompt": "只输出最终结果，不要解释。Python 表达式 `'abc'.find('z')` 的值是什么？", "expected": "-1", "tags": ["objective", "python", "derived"]}
