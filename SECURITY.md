@@ -1,118 +1,82 @@
 # Security Policy
 
-OI Enhancements takes security seriously. This document explains how
-to report vulnerabilities and what to expect from the maintainers.
-
+This document explains how to report security issues in Self-Awakening and what
+to expect from the maintainers.
 
 ## Supported versions
 
-The following versions of OI Enhancements receive security updates:
-
 | Version | Supported |
-| ------- | --------- |
-| Latest stable (v2.x) | yes |
-| Previous major (v1.x) | best-effort, only critical fixes |
-| v0.x and earlier | no |
+| --- | --- |
+| `0.1.x` (current) | yes |
+| older snapshots | no |
 
-We follow a "fix in next minor" policy: security fixes for the
-latest stable release are typically shipped in the next minor
-release (e.g. v2.6.x → v2.6.x+1) within 30 days of confirmed
-fix. Critical vulnerabilities affecting local data integrity or
-authentication are expedited.
+The project is at 0.1 MVP. Fixes land on the `main` branch and in the next
+release; critical issues are expedited.
 
+## How to report
 
-## How to report a security issue
+**Do not open a public issue for a vulnerability.**
 
-**Do NOT open a public GitHub issue for security vulnerabilities.**
-
-Instead, use one of these private channels:
-
-1. **GitHub private vulnerability reporting**: on the repository's
-   Security tab, click "Report a vulnerability". This sends the
-   report privately to the maintainers.
-2. **Email**: see [COMMERCIAL-LICENSE.md](./COMMERCIAL-LICENSE.md)
-   for the security contact email.
+Use GitHub's private vulnerability reporting: repository **Security** tab →
+**Report a vulnerability**. If that is unavailable, open a public issue that only
+asks for a private channel, without technical details.
 
 Please include:
 
-- a clear description of the vulnerability;
-- steps to reproduce (or a proof-of-concept);
-- the affected version(s) and platform (Windows / Linux / macOS);
-- any known impact (data exposure, code execution, etc.);
-- your name / handle if You would like to be credited in the
-  advisory.
-
+- a clear description and the impact (data exposure, code execution, etc.);
+- steps to reproduce or a proof of concept;
+- affected version, Python version, and OS;
+- your name or handle if you want credit.
 
 ## What to expect
 
-| Stage | Time target |
-| ----- | ----------- |
-| Acknowledgement of the report | within 3 business days |
-| Initial triage (severity, scope) | within 7 business days |
-| Status update on the fix | every 14 days until resolved |
-| Public advisory | after a fix is released, or within 90 days of the report, whichever is earlier |
+| Stage | Target |
+| --- | --- |
+| Acknowledgement | 3 business days |
+| Initial triage | 7 business days |
+| Status updates | every 14 days until resolved |
+| Public advisory | after a fix ships, or 90 days after the report |
 
-We follow a **coordinated disclosure** model: we ask that You do
-not disclose the vulnerability publicly until we have released a
-fix, or until 90 days have passed since the report, whichever is
-earlier.
+We follow coordinated disclosure: please do not publish before a fix ships or
+before 90 days have passed, whichever is earlier.
 
+## Scope
 
-## Severity rating
+In scope:
 
-We use the [CVSS 3.1](https://www.first.org/cvss/calculator/3.1)
-scoring as a guide:
+- the CLI and library in `src/self_awaken/`;
+- the optional Flask dashboard in `web_report/`;
+- credential handling (the tool reads `SELF_AWAKEN_API_KEY` and must never log
+  it, write it to reports, or include it in `runs/*.json`);
+- injection through probe content or probe files loaded from disk.
 
-| Severity | CVSS | Example |
-| -------- | ---- | ------- |
-| Critical | 9.0–10.0 | remote code execution from a sandboxed component |
-| High | 7.0–8.9 | local privilege escalation, plaintext token exposure |
-| Medium | 4.0–6.9 | cross-site scripting, unauthenticated access to non-sensitive routes |
-| Low | 0.1–3.9 | denial of service via malformed input |
+Out of scope:
 
-The actual severity is decided by the maintainers based on
-real-world impact, not just the CVSS score.
+- vulnerabilities in the endpoints you audit, or in the models behind them;
+- vulnerabilities in third-party packages (report upstream; we will pick up the
+  fix);
+- issues that require installing a malicious package yourself;
+- disagreements about a capability verdict — those are correctness bugs, not
+  security issues, and belong in a normal issue;
+- trademark questions, which belong in [TRADEMARKS.md](TRADEMARKS.md).
 
+## Handling of your data
 
-## Out-of-scope
+- API keys are sent only to the endpoint you pass on the command line.
+- `runs/*.json` records prompts, answers, latency, and token counts. It does not
+  record the API key.
+- Reports are written locally; nothing is uploaded by this project.
 
-The following are NOT considered vulnerabilities in OI Enhancements
-unless caused by a bug in the Software itself:
-
-- vulnerabilities in third-party dependencies (report upstream
-  instead; we will pick up the fix in our next dep refresh);
-- vulnerabilities in user-supplied local model servers;
-- vulnerabilities in user-supplied PrisirWork tokens stored at
-  `~/.prisir/work.json` (this is the user's responsibility; the
-  Software reads it with appropriate file mode on Unix);
-- reports that require the user to install a malicious package
-  themselves (e.g. typosquatting);
-- issues that are entirely about the Brand or license terms (use
-  TRADEMARKS.md / LICENSE-POLICY.md instead).
-
+If you find a path that violates any of the above, treat it as a security report.
 
 ## Bug bounty
 
-OI Enhancements does **not** currently run a paid bug bounty
-program. We credit reporters in the advisory and in the
-`AUTHORS.md` file (when present) at the reporter's option.
+There is no paid bounty program. Reporters are credited in the advisory at their
+option. A commercial support or security agreement can be discussed via
+[LICENSING.md](LICENSING.md).
 
-If Your organization requires a paid bounty or paid SLAs, please
-contact us for a commercial security agreement via
-[COMMERCIAL-LICENSE.md](./COMMERCIAL-LICENSE.md).
+## Advisories
 
+Published advisories appear under the repository's Security tab.
 
-## Past advisories
-
-Past security advisories will be published in the GitHub Security
-tab under "Advisories". A consolidated list will be added here
-once any advisories exist.
-
-
-## Acknowledgement
-
-Thanks to the security researchers and users who report
-vulnerabilities responsibly.
-
-
-Last updated: 2026-08-28
+*Last updated: 2026-11-25*

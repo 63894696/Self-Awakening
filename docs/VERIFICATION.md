@@ -19,7 +19,7 @@ pip install -e ".[web]"
 pytest tests/ -q
 ```
 
-结果：**34 passed**（含 retry、client、factory、web 路由、探针加载等）。
+结果：**73 passed**（含 retry、client、factory、web 路由、探针加载、能力判定、题库 lint 等）。
 
 ## 端到端审计结果
 
@@ -65,7 +65,36 @@ python -m self_awaken.cli compare `
   --out runs/my-verify-report.md
 ```
 
-全库 51 题：将 `--probes` 改为 `data/probes`。
+全库 68 题：将 `--probes` 改为 `data/probes`。
+
+## 能力达标判定验证（2026-11-25）
+
+`code` 档位，`--pack standard`，`--max-tokens 200`，真实接口：
+
+| 接口 | 判定 | 通过率 | 运行题数 | token |
+|------|------|-------:|---------:|------:|
+| `deepseek-chat` | SUFFICIENT | 1.00 | 11 | 830 |
+| `glm-5.3` | SUFFICIENT | 1.00 | 11 | 3 016 |
+| `claude-sonnet-4-6`（中转） | SUFFICIENT | 1.00 | 11 | 1 390 |
+| `glm-4-flash`（弱模型对照） | INSUFFICIENT | 0.65 | 23 | 2 196 |
+
+要点：
+
+- 强模型在第 11 题即早停，未跑满题包；弱模型被正确判为不达标，说明规则不是"一律通过"。
+- GLM 因 200 token 截断触发重试，token 偏高；截断答案被记为 `truncated_output` 而非错答。
+- 复跑命令：`self-awaken check --endpoint ... --model ... --profile code --pack standard`。
+
+## 题库校验
+
+```bash
+self-awaken lint-probes --probes data/probes --strict
+# 68 probes, 0 errors, 0 warnings
+```
+
+`data/probe_templates.jsonl` 是出题模板（参数范围 + 答案表达式）。模板输出必须先把
+`expected` 求值、把槽位填满，才能成为题库；直接拿模板批量结果当题库会产出
+`<calc-failed>` / `<needs-llm-eval>` 占位答案、`OK/YES/TRUE` 这类未展开槽位和重复题。
+本项目生成过一批 v5.2（188 行）候选，因上述缺陷已整体丢弃，不参与判定。
 
 ## 结论
 

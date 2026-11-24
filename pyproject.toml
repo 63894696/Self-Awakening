@@ -5,14 +5,22 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "self-awakening"
 version = "0.1.0"
-description = "Black-box transparency audit toolkit for model identity and capability fingerprinting."
+description = "Black-box capability audit toolkit: decide whether an API endpoint is good enough for your task, at a small probe cost."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "Apache-2.0" }
+license = { text = "AGPL-3.0-or-later" }
 authors = [
   { name = "Self-Awakening contributors" }
 ]
 keywords = ["ai", "audit", "benchmark", "fingerprint", "transparency"]
+classifiers = [
+  "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Quality Assurance",
+  "Topic :: System :: Monitoring",
+]
 dependencies = []
 
 [project.optional-dependencies]
